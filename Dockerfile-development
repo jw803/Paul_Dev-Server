@@ -1,0 +1,25 @@
+FROM node:12.13.1-stretch
+
+# Create app directory
+RUN mkdir -p /usr/src/app
+WORKDIR /usr/src/app
+
+# Install app dependencies
+COPY package.json /usr/src/app/
+
+RUN npm install -g pm2
+
+RUN npm install
+
+# Bundle app source
+COPY . /usr/src/app
+
+# enviroment varible
+ENV NODE_ENV=development
+# Bcrypt Setting
+ENV SALT_ROUNDS=2
+# JWT Setting
+ENV SECRET=just_some_secret
+
+EXPOSE 6000
+CMD [ "npm", "run", "start:pm2" ]
