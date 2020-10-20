@@ -1,8 +1,13 @@
 import { Request, Response } from 'express';
 import MainRoute from './route.abstract';
-import UserController from '../controllers/user.controller';
+import validationMiddleware from '../middleware/validation.middleware';
+import CreateUserDto from '../dto/user.dto';
+import LogInDto from '../dto/logIn.dto';
+import UserController from '../controllers/auth.controller';
 
 class UserRoutes extends MainRoute {
+    private path = '/auth';
+
     private userController: UserController = new UserController();
 
     constructor() {
@@ -15,9 +20,13 @@ class UserRoutes extends MainRoute {
             res.status(200).send('you called user path test!');
         });
         this.router
-            .route('/user')
-            .get(this.userController.getAll)
-            .post(this.userController.createOne);
+            .post(
+                `${this.path}/register`,
+                validationMiddleware(CreateUserDto),
+                this.userController.register
+            )
+            .post(`${this.path}/login`, validationMiddleware(LogInDto), this.userController.login)
+            .post(`${this.path}/logout`, this.userController.logout);
     }
 }
 

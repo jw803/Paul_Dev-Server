@@ -9,5 +9,6 @@
     "settings": {
         "terminal.integrated.shell.linux": "/bin/bash"
     },
-    "runArgs": ["-u", "node"]
+    "runArgs": ["-u", "node"],
+    "postCreateCommand": "yarn install"
 }

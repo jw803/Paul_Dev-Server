@@ -1,10 +1,15 @@
 import { Model, DataTypes } from 'sequelize';
 import database from './database';
+import IUser from '../interface/IUser';
 
-export default class User extends Model {
-    public id!: number;
+export default class User extends Model implements IUser {
+    public _id!: string;
 
     public name!: string;
+
+    public password!: string;
+
+    public email!: string;
 
     public readonly createdAt!: Date;
 
@@ -25,7 +30,7 @@ User.init(
     },
     {
         tableName: 'nodes',
-        sequelize: database // this bit is important
+        sequelize: database
     }
 );
 

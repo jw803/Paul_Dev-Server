@@ -2,14 +2,14 @@ import { Router } from 'express';
 import config from '../config';
 
 abstract class MainRoute {
-    private path = config.VERSION;
+    private prefix = config.VERSION;
 
     protected router = Router();
 
     protected abstract setRoutes(): void;
 
     public getPrefix() {
-        return this.path;
+        return this.prefix;
     }
 
     public getRouter() {
