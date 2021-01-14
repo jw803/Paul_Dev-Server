@@ -24,12 +24,23 @@ User.init(
             primaryKey: true
         },
         name: {
-            type: new DataTypes.STRING(128),
+            type: new DataTypes.STRING(),
             allowNull: false
+        },
+        password: {
+            type: new DataTypes.STRING(),
+            allowNull: false
+        },
+        email: {
+            type: new DataTypes.STRING(),
+            allowNull: false,
+            validate: {
+                isEmail: true
+            }
         }
     },
     {
-        tableName: 'nodes',
+        tableName: 'users',
         sequelize: database
     }
 );

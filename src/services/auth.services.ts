@@ -11,7 +11,7 @@ import TokenData from '../interface/ITokenData';
 class AuthenticationService {
     public user = userModel;
 
-    public async register(userData: CreateUserDto) {
+    public register = async (userData: CreateUserDto) => {
         if (await this.user.findOne({ where: { email: userData.email } })) {
             throw new UserWithThatEmailAlreadyExistsException(userData.email);
         }
@@ -21,16 +21,11 @@ class AuthenticationService {
             password: hashedPassword
         });
         const tokenData = this.createToken(user);
-        const cookie = this.createCookie(tokenData);
         return {
-            cookie,
-            user
+            ...tokenData,
+            username: userData.name
         };
-    }
-
-    public createCookie(tokenData: TokenData) {
-        return `Authorization=${tokenData.token}; HttpOnly; Max-Age=${tokenData.expiresIn}`;
-    }
+    };
 
     public createToken(user: IUser): TokenData {
         const expiresIn = 60 * 60; // an hour

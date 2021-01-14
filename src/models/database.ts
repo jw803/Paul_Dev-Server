@@ -3,10 +3,10 @@ import config from '../config';
 
 const database = new Sequelize({
     host: config.DBHOST,
-    database: 'paul_dev',
+    database: 'chuBunny',
     dialect: 'mysql',
-    username: 'root',
-    password: 'skyraker803',
+    username: 'admin',
+    password: 'abc123321',
     pool: {
         max: 5,
         min: 0,

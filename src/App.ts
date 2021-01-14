@@ -16,10 +16,10 @@ class App {
     }
 
     private initializeMiddlewares() {
+        this.app.use(json());
         this.app.use(urlencoded({ extended: false }));
         this.app.use(cors());
         this.app.use(cookieParser());
-        this.app.use(json);
     }
 
     private initializeErrorHandling(): void {

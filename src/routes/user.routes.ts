@@ -20,13 +20,13 @@ class UserRoutes extends MainRoute {
             res.status(200).send('you called user path test!');
         });
         this.router
+            .get(`${this.path}/validate`, this.userController.valid)
             .post(
                 `${this.path}/register`,
                 validationMiddleware(CreateUserDto),
                 this.userController.register
             )
-            .post(`${this.path}/login`, validationMiddleware(LogInDto), this.userController.login)
-            .post(`${this.path}/logout`, this.userController.logout);
+            .post(`${this.path}/login`, validationMiddleware(LogInDto), this.userController.login);
     }
 }
 

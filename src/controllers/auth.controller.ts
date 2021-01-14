@@ -14,20 +14,19 @@ import config from '../config';
 class AuthController {
     private user = userModel;
 
-    public authenticationService = new AuthenticationService();
+    private authenticationService: AuthenticationService = new AuthenticationService();
 
-    public async register(request: Request, response: Response, next: NextFunction) {
+    public register = async (request: Request, response: Response, next: NextFunction) => {
         const userData: CreateUserDto = request.body;
         try {
-            const { cookie, user } = await this.authenticationService.register(userData);
-            response.setHeader('Set-Cookie', [cookie]);
-            response.send(user);
+            const result = await this.authenticationService.register(userData);
+            response.json(result);
         } catch (error) {
             next(error);
         }
-    }
+    };
 
-    public async login(request: Request, response: Response, next: NextFunction) {
+    public login = async (request: Request, response: Response, next: NextFunction) => {
         const logInData: LogInDto = request.body;
         const user = await this.user.findOne({ where: { email: logInData.email } });
         if (user) {
@@ -37,23 +36,36 @@ class AuthController {
             );
             if (isPasswordMatching) {
                 const tokenData = this.createToken(user);
-                response.setHeader('Set-Cookie', [this.createCookie(tokenData)]);
-                response.send(user);
+                response.json({
+                    username: user.name,
+                    ...tokenData
+                });
             } else {
                 next(new WrongCredentialsException());
             }
         } else {
             next(new WrongCredentialsException());
         }
-    }
+    };
 
-    public async logout(request: Request, response: Response) {
-        response.setHeader('Set-Cookie', ['Authorization=;Max-age=0']);
-        response.send(200);
-    }
-
-    private createCookie(tokenData: ITokenData) {
-        return `Authorization=${tokenData.token}; HttpOnly; Max-Age=${tokenData.expiresIn}`;
+    public async valid(request: Request, response: Response, next: NextFunction) {
+        let token = request.headers.authorization;
+        if (token) {
+            jwt.verify(token, config.JWT_SECRET, (err, decode: any) => {
+                if (decode) {
+                    response.json({
+                        username: decode.username,
+                        token: jwt.sign({ username: decode.username }, config.JWT_SECRET, {
+                            expiresIn: 200
+                        })
+                    });
+                } else {
+                    next(new WrongCredentialsException());
+                }
+            });
+        } else {
+            next(new WrongCredentialsException());
+        }
     }
 
     private createToken(user: IUser): ITokenData {
